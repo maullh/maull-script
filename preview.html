@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maull-Script V1.2.0 - Enhanced Interface Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            color: #00ff00;
+            padding: 20px;
+            line-height: 1.4;
+            min-height: 100vh;
+        }
+
+        .terminal {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 0, 0.3),
+                inset 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 191, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #00ff00, #00bfff);
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .blue { color: #00bfff; }
+        .green { color: #00ff00; }
+        .yellow { color: #ffff00; }
+        .red { color: #ff0000; }
+        .cyan { color: #00ffff; }
+        .white { color: #ffffff; }
+        .gray { color: #888888; }
+        .purple { color: #ff00ff; }
+        .orange { color: #ffa500; }
+
+        .box {
+            border: 1px solid #00bfff;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0, 191, 255, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        .enhanced-box {
+            border: 2px solid #00ff00;
+            background: linear-gradient(135deg, rgba(0, 255, 0, 0.1) 0%, rgba(0, 191, 255, 0.1) 100%);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+
+        .menu-item {
+            padding: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            padding-left: 10px;
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background: linear-gradient(90deg, rgba(0, 255, 0, 0.2), rgba(0, 191, 255, 0.1));
+            padding-left: 20px;
+            transform: translateX(5px);
+        }
+
+        .menu-item::before {
+            content: '▶';
+            position: absolute;
+            left: -15px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover::before {
+            opacity: 1;
+            left: 0;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: statusBlink 2s infinite;
+        }
+
+        .status-on { 
+            background: radial-gradient(circle, #00ff00, #008800);
+            box-shadow: 0 0 10px #00ff00;
+        }
+        .status-off { 
+            background: radial-gradient(circle, #ff0000, #880000);
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: linear-gradient(90deg, #333, #444);
+            border: 1px solid #666;
+            border-radius: 12px;
+            margin: 8px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
+            transition: width 0.5s ease;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .tab-container {
+            margin: 25px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #333, #444);
+            border: 1px solid #666;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .tab-button:hover {
+            background: linear-gradient(135deg, #444, #555);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #00bfff, #0080ff);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 2px solid #666;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(26, 26, 26, 0.3));
+            backdrop-filter: blur(5px);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .installation-step {
+            padding: 12px;
+            margin: 8px 0;
+            border-left: 4px solid #00ff00;
+            background: linear-gradient(90deg, rgba(0, 255, 0, 0.1), transparent);
+            border-radius: 0 8px 8px 0;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .loading {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            color: #00bfff;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid #00ff00;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #00ff00; }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(0, 191, 255, 0.1));
+            border: 1px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 0, 0.2);
+            border-color: #00bfff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 191, 255, 0.1), rgba(0, 255, 0, 0.1));
+            border: 1px solid #00bfff;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff00;
+            display: block;
+        }
+
+        .enhanced-badge {
+            background: linear-gradient(45deg, #ff0080, #ff8000);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(255, 0, 128, 0.5); }
+            to { box-shadow: 0 0 15px rgba(255, 128, 0, 0.8); }
+        }
+
+        .automation-indicator {
+            display: inline-block;
+            background: linear-gradient(45deg, #00ff00, #00bfff);
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+            animation: autoGlow 3s infinite;
+        }
+
+        @keyframes autoGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(0, 191, 255, 0.8); }
+        }
+
+        .scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #00ff00 #333;
+        }
+
+        .scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollbar::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #00ff00, #00bfff);
+            border-radius: 4px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #00bfff, #00ff00);
+        }
+
+        @media (max-width: 768px) {
+            .terminal {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal scrollbar">
+        <div class="header">
+            <div class="version-badge">V1.2.0 ENHANCED</div>
+            <div class="blue">╔══════════════════════════════════════════════════════════════════════════════╗</div>
+            <div class="blue">║<span class="cyan">                           Maull-Script V1.2.0                               </span>║</div>
+            <div class="blue">║<span class="white">                    Enhanced Complete VPS Tunneling Solution                </span>║</div>
+            <div class="blue">║<span class="yellow">                          with Advanced Features                            </span>║</div>
+            <div class="blue">╚══════════════════════════════════════════════════════════════════════════════╝</div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="showTab('installation')">🚀 Installation Process</button>
+                <button class="tab-button" onclick="showTab('main-menu')">📋 Main Menu</button>
+                <button class="tab-button" onclick="showTab('enhanced-features')">⚡ Enhanced Features</button>
+                <button class="tab-button" onclick="showTab('automation')">🤖 Automation System</button>
+                <button class="tab-button" onclick="showTab('user-management')">👥 User Management</button>
+                <button class="tab-button" onclick="showTab('monitoring')">📊 System Monitor</button>
+                <button class="tab-button" onclick="showTab('multiport')">🌐 Multiport Config</button>
+            </div>
+
+            <!-- Installation Process -->
+            <div id="installation" class="tab-content active">
+                <div class="green">[INFO]</div> <span class="typewriter">Starting Maull-Script V1.2.0 Enhanced Installation...</span><br><br>
+
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> OS detected: Ubuntu 22.04 LTS
+                </div>
+                <div class="installation-step">
+                    <div class="green">[INFO]</div> Checking system requirements... <span class="loading">⟳</span>
+                </div>
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> System requirements check passed
+                </div>
+                <div class="installation-step">
+                    <div class="green">[INFO]</div> Creating directories and configurations...
+                </div>
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> Directories created successfully
+                </div>
+                <div class="installation-step">
+                    <div class="green">[INFO]</div> Updating system packages...
+                </div>
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> System packages updated successfully
+                </div>
+                <div class="installation-step">
+                    <div class="green">[INFO]</div> Configuring enhanced firewall...
+                </div>
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> Enhanced firewall configured successfully
+                </div>
+                <div class="installation-step">
+                    <div class="green">[INFO]</div> Installing Xray with enhanced multiport configuration...
+                </div>
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> Xray enhanced multiport installed successfully
+                </div>
+                <div class="installation-step">
+                    <div class="green">[INFO]</div> Configuring enhanced Nginx multiport...
+                </div>
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> Enhanced Nginx multiport configured successfully
+                </div>
+                <div class="installation-step">
+                    <div class="green">[INFO]</div> Installing enhanced SSH services...
+                </div>
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> Enhanced SSH services installed successfully
+                </div>
+                <div class="installation-step">
+                    <div class="green">[INFO]</div> Installing enhanced Shadowsocks...
+                </div>
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> Enhanced Shadowsocks installed successfully
+                </div>
+                <div class="installation-step">
+                    <div class="green">[INFO]</div> Setting up enhanced automation system...
+                </div>
+                <div class="installation-step">
+                    <div class="green">[SUCCESS]</div> Enhanced automation system configured successfully
+                </div>
+
+                <br>
+                <div class="cyan">╔══════════════════════════════════════════════════════════════════════════════╗</div>
+                <div class="cyan">║                           INSTALLATION COMPLETE                             ║</div>
+                <div class="cyan">╚══════════════════════════════════════════════════════════════════════════════╝</div>
+                <br>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="green">🌟 Server Information:</div><br>
+                        <div>IP Address: <span class="cyan">203.0.113.1</span></div>
+                        <div>Location: <span class="cyan">Singapore</span></div>
+                        <div>OS: <span class="cyan">Ubuntu 22.04</span></div>
+                        <div>Script Version: <span class="cyan">V1.2.0 Enhanced</span></div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="green">🚀 Enhanced Features:</div><br>
+                        <div>✅ Auto Reboot System</div>
+                        <div>✅ Auto Update System</div>
+                        <div>✅ Auto Backup System</div>
+                        <div>✅ Advanced User Management</div>
+                        <div>✅ Multi-Path Support</div>
+                    </div>
+                </div>
+
+                <div class="yellow">🎯 Access Panel:</div><br>
+                <div>Command: <span class="cyan">menu</span></div>
+                <div>Alternative: <span class="cyan">/root/maull-script.sh</span></div>
+                <br>
+                <div class="yellow">⚠️ Important:</div><br>
+                <div>• All services are running automatically</div>
+                <div>• Multiport architecture: Only 5 ports used (443, 80, 22, 1194, 7300)</div>
+                <div>• Full automation: Zero maintenance required</div>
+                <div>• Type 'menu' anytime to access the management panel</div>
+                <br>
+                <div>Press Enter to access the menu...</div>
+            </div>
+
+            <!-- Main Menu -->
+            <div id="main-menu" class="tab-content">
+                <!-- System Information -->
+                <div class="box enhanced-box">
+                    <div class="blue">║<span class="white"> SYSTEM        </span><span class="gray">: Ubuntu 22.04 LTS</span><span class="automation-indicator">AUTO</span>║</div>
+                    <div class="blue">║<span class="white"> RAM           </span><span class="gray">: 4.0/8.0GB (50%)</span>║</div>
+                    <div class="blue">║<span class="white"> UPTIME        </span><span class="gray">: 5 days, 14 hours, 32 minutes</span>║</div>
+                    <div class="blue">║<span class="white"> IP VPS        </span><span class="gray">: 203.0.113.1</span>║</div>
+                    <div class="blue">║<span class="white"> CITY          </span><span class="gray">: Singapore</span>║</div>
+                    <div class="blue">║<span class="white"> ISP           </span><span class="gray">: DigitalOcean LLC</span>║</div>
+                    <div class="blue">║<span class="white"> DOMAIN        </span><span class="gray">: example.com</span><span class="enhanced-badge">SSL</span>║</div>
+                    <div class="blue">║<span class="white"> CPU USAGE     </span><span class="gray">: 15.2%</span>║</div>
+                </div>
+
+                <!-- Enhanced Service Status -->
+                <div class="box enhanced-box">
+                    <div class="blue">║<span class="white"> NGINX </span><span class="gray">: </span><span class="status-indicator status-on"></span><span class="green">ON</span><span class="gray"> │ </span><span class="white">XRAY </span><span class="gray">: </span><span class="status-indicator status-on"></span><span class="green">ON</span><span class="gray"> │ </span><span class="white">SSH </span><span class="gray">: </span><span class="status-indicator status-on"></span><span class="green">ON</span><span class="gray"> │ </span><span class="white">MULTIPORT: </span><span class="green">ACTIVE</span><span class="enhanced-badge">V1.2.0</span>║</div>
+                    <div class="blue">║<span class="white"> DROPBEAR </span><span class="gray">: </span><span class="status-indicator status-on"></span><span class="green">ON</span><span class="gray"> │ </span><span class="white">SSH-WS </span><span class="gray">: </span><span class="status-indicator status-on"></span><span class="green">ON</span><span class="gray"> │ </span><span class="white">SHADOWSOCKS </span><span class="gray">: </span><span class="status-indicator status-on"></span><span class="green">ON</span><span class="automation-indicator">AUTO</span>║</div>
+                </div>
+
+                <!-- Enhanced User Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">25</span>
+                        <div class="white">SSH USERS</div>
+                        <div class="automation-indicator">MANAGED</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">18</span>
+                        <div class="white">VMESS USERS</div>
+                        <div class="enhanced-badge">MULTIPORT</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">15</span>
+                        <div class="white">VLESS USERS</div>
+                        <div class="enhanced-badge">ENHANCED</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">12</span>
+                        <div class="white">TROJAN USERS</div>
+                        <div class="automation-indicator">AUTO</div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Bandwidth Info -->
+                <div class="box enhanced-box">
+                    <div class="blue">║<span class="white">         STORAGE     </span><span class="gray">│ </span><span class="white">TODAY      </span><span class="gray">│ </span><span class="white">MONTHLY</span><span class="enhanced-badge">TRACKED</span>║</div>
+                    <div class="blue">║<span class="red">         3.2 GB      </span><span class="gray">│ </span><span class="yellow">156.78 GB  </span><span class="gray">│ </span><span class="green">892.45 GB</span><span class="automation-indicator">AUTO</span>║</div>
+                </div>
+
+                <br>
+                <div class="cyan">Enhanced Main Menu - All features automated and optimized!</div>
+            </div>
+
+            <!-- Enhanced Features -->
+            <div id="enhanced-features" class="tab-content">
+                <div class="header">
+                    <div class="blue">╔══════════════════════════════════════════════════════════════════════════════╗</div>
+                    <div class="blue">║<span class="cyan">                              ENHANCED FEATURES V1.2.0                       </span>║</div>
+                    <div class="blue">╚══════════════════════════════════════════════════════════════════════════════╝</div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="green">🕐 Auto Scheduling System</div><br>
+                        <div class="menu-item">• Auto Reboot: 00:00 daily <span class="automation-indicator">ACTIVE</span></div>
+                        <div class="menu-item">• Auto Update: 01:15 daily <span class="automation-indicator">ACTIVE</span></div>
+                        <div class="menu-item">• Auto Backup: 11:15 daily <span class="automation-indicator">ACTIVE</span></div>
+                        <div class="menu-item">• Auto Delete Expired: 02:00 daily <span class="automation-indicator">ACTIVE</span></div>
+                        <div class="menu-item">• Auto Kill Multi Login: Every 5 min <span class="automation-indicator">ACTIVE</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">👥 Advanced User Management</div><br>
+                        <div class="menu-item">• CREATE & DELETE & RENEW ACCOUNT <span class="enhanced-badge">NEW</span></div>
+                        <div class="menu-item">• LOCK & UNLOCK ACCOUNT <span class="enhanced-badge">NEW</span></div>
+                        <div class="menu-item">• LIMIT IP & QUOTA per user <span class="enhanced-badge">NEW</span></div>
+                        <div class="menu-item">• MONITOR ACCOUNT real-time <span class="enhanced-badge">NEW</span></div>
+                        <div class="menu-item">• RECOVERY ACCOUNT system <span class="enhanced-badge">NEW</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">🔧 System Management Tools</div><br>
+                        <div class="menu-item">• CHECK RUNNING SERVICE <span class="automation-indicator">AUTO</span></div>
+                        <div class="menu-item">• RESTART ALL SERVICES <span class="automation-indicator">AUTO</span></div>
+                        <div class="menu-item">• MONITOR VPS real-time <span class="enhanced-badge">LIVE</span></div>
+                        <div class="menu-item">• SPEEDTEST integration <span class="enhanced-badge">NEW</span></div>
+                        <div class="menu-item">• FIX ERROR tools <span class="enhanced-badge">AUTO</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">🌐 Multi-Path Support</div><br>
+                        <div class="menu-item">• OPOK optimization <span class="enhanced-badge">ISP</span></div>
+                        <div class="menu-item">• ISAT optimization <span class="enhanced-badge">ISP</span></div>
+                        <div class="menu-item">• TELKOMSEL optimization <span class="enhanced-badge">ISP</span></div>
+                        <div class="menu-item">• XL AXIATA optimization <span class="enhanced-badge">ISP</span></div>
+                        <div class="menu-item">• Dynamic path routing <span class="enhanced-badge">SMART</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">⚡ Speed & Quota Management</div><br>
+                        <div class="menu-item">• LIMIT SPEED per user <span class="enhanced-badge">NEW</span></div>
+                        <div class="menu-item">• SWITCH ON/OFF LIMIT <span class="enhanced-badge">NEW</span></div>
+                        <div class="menu-item">• QUOTA management <span class="enhanced-badge">NEW</span></div>
+                        <div class="menu-item">• Bandwidth monitoring <span class="automation-indicator">LIVE</span></div>
+                        <div class="menu-item">• Traffic analysis <span class="enhanced-badge">AI</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">💾 Backup & Recovery</div><br>
+                        <div class="menu-item">• AUTOBACKUP system <span class="automation-indicator">DAILY</span></div>
+                        <div class="menu-item">• BACKUP & RESTORE <span class="enhanced-badge">FULL</span></div>
+                        <div class="menu-item">• Emergency recovery <span class="enhanced-badge">AUTO</span></div>
+                        <div class="menu-item">• Configuration versioning <span class="enhanced-badge">NEW</span></div>
+                        <div class="menu-item">• Remote backup support <span class="enhanced-badge">CLOUD</span></div>
+                    </div>
+                </div>
+
+                <div class="box enhanced-box">
+                    <div class="cyan">🎯 Key Improvements in V1.2.0:</div><br>
+                    <div>✅ 100% Automation Coverage - Zero maintenance required</div>
+                    <div>✅ Advanced User Management - Complete control over users</div>
+                    <div>✅ Multi-ISP Optimization - Optimized for Indonesian providers</div>
+                    <div>✅ Real-time Monitoring - Live system and user monitoring</div>
+                    <div>✅ Self-healing System - Automatic problem detection and fixing</div>
+                    <div>✅ Enterprise Features - Professional-grade management tools</div>
+                </div>
+            </div>
+
+            <!-- Automation System -->
+            <div id="automation" class="tab-content">
+                <div class="header">
+                    <div class="blue">╔══════════════════════════════════════════════════════════════════════════════╗</div>
+                    <div class="blue">║<span class="cyan">                              AUTOMATION SYSTEM                               </span>║</div>
+                    <div class="blue">╚══════════════════════════════════════════════════════════════════════════════╝</div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="green">🕐 Scheduled Tasks</div><br>
+                        <div>Auto Reboot: <span class="cyan">00:00 daily</span> <span class="automation-indicator">ACTIVE</span></div>
+                        <div>Auto Update: <span class="cyan">01:15 daily</span> <span class="automation-indicator">ACTIVE</span></div>
+                        <div>Auto Backup: <span class="cyan">11:15 daily</span> <span class="automation-indicator">ACTIVE</span></div>
+                        <div>Delete Expired: <span class="cyan">02:00 daily</span> <span class="automation-indicator">ACTIVE</span></div>
+                        <div>Kill Multi Login: <span class="cyan">Every 5 min</span> <span class="automation-indicator">ACTIVE</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">🤖 Smart Monitoring</div><br>
+                        <div>Service Health Check: <span class="cyan">Every 1 min</span> <span class="automation-indicator">LIVE</span></div>
+                        <div>Resource Monitoring: <span class="cyan">Continuous</span> <span class="automation-indicator">LIVE</span></div>
+                        <div>User Activity Tracking: <span class="cyan">Real-time</span> <span class="automation-indicator">LIVE</span></div>
+                        <div>Security Monitoring: <span class="cyan">24/7</span> <span class="automation-indicator">ACTIVE</span></div>
+                        <div>Performance Analysis: <span class="cyan">Hourly</span> <span class="automation-indicator">AUTO</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">🔧 Auto Repair System</div><br>
+                        <div>Service Auto Restart: <span class="automation-indicator">ENABLED</span></div>
+                        <div>Configuration Auto Fix: <span class="automation-indicator">ENABLED</span></div>
+                        <div>SSL Auto Renewal: <span class="automation-indicator">ENABLED</span></div>
+                        <div>Disk Cleanup: <span class="automation-indicator">ENABLED</span></div>
+                        <div>Log Rotation: <span class="automation-indicator">ENABLED</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">📊 Intelligent Analytics</div><br>
+                        <div>Usage Pattern Analysis: <span class="enhanced-badge">AI</span></div>
+                        <div>Performance Optimization: <span class="enhanced-badge">AUTO</span></div>
+                        <div>Predictive Maintenance: <span class="enhanced-badge">SMART</span></div>
+                        <div>Anomaly Detection: <span class="enhanced-badge">ML</span></div>
+                        <div>Capacity Planning: <span class="enhanced-badge">AI</span></div>
+                    </div>
+                </div>
+
+                <div class="box enhanced-box">
+                    <div class="white">Automation Status Dashboard:</div><br>
+                    <div>System Health: <span class="status-indicator status-on"></span><span class="green">Excellent</span></div>
+                    <div>Automation Coverage: <span class="status-indicator status-on"></span><span class="green">100%</span></div>
+                    <div>Self-healing: <span class="status-indicator status-on"></span><span class="green">Active</span></div>
+                    <div>Monitoring: <span class="status-indicator status-on"></span><span class="green">Real-time</span></div>
+                    <div>Backup Status: <span class="status-indicator status-on"></span><span class="green">Up to date</span></div>
+                </div>
+
+                <div class="cyan">🎯 Zero Maintenance VPS Management - Everything runs automatically!</div>
+            </div>
+
+            <!-- User Management -->
+            <div id="user-management" class="tab-content">
+                <div class="header">
+                    <div class="blue">╔══════════════════════════════════════════════════════════════════════════════╗</div>
+                    <div class="blue">║<span class="cyan">                           ADVANCED USER MANAGEMENT                          </span>║</div>
+                    <div class="blue">╚══════════════════════════════════════════════════════════════════════════════╝</div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="green">👤 User Operations</div><br>
+                        <div class="menu-item">1. CREATE ACCOUNT <span class="enhanced-badge">ADVANCED</span></div>
+                        <div class="menu-item">2. DELETE ACCOUNT <span class="enhanced-badge">SAFE</span></div>
+                        <div class="menu-item">3. RENEW ACCOUNT <span class="enhanced-badge">BULK</span></div>
+                        <div class="menu-item">4. TRIAL ACCOUNT <span class="enhanced-badge">AUTO</span></div>
+                        <div class="menu-item">5. LOCK/UNLOCK ACCOUNT <span class="enhanced-badge">NEW</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">📊 User Monitoring</div><br>
+                        <div class="menu-item">1. LIST ALL ACCOUNTS <span class="enhanced-badge">DETAILED</span></div>
+                        <div class="menu-item">2. DETAIL ACCOUNT <span class="enhanced-badge">FULL</span></div>
+                        <div class="menu-item">3. MONITOR ACCOUNT <span class="automation-indicator">LIVE</span></div>
+                        <div class="menu-item">4. CHECK LOGIN UDP <span class="automation-indicator">REAL-TIME</span></div>
+                        <div class="menu-item">5. RECOVERY ACCOUNT <span class="enhanced-badge">AUTO</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">⚙️ Advanced Controls</div><br>
+                        <div class="menu-item">1. LIMIT IP per user <span class="enhanced-badge">FLEXIBLE</span></div>
+                        <div class="menu-item">2. QUOTA MANAGEMENT <span class="enhanced-badge">SMART</span></div>
+                        <div class="menu-item">3. SPEED LIMITING <span class="enhanced-badge">PRECISE</span></div>
+                        <div class="menu-item">4. AUTOKILL SETTINGS <span class="automation-indicator">AUTO</span></div>
+                        <div class="menu-item">5. EDIT LIMITS <span class="enhanced-badge">DYNAMIC</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">🔒 Security Features</div><br>
+                        <div class="menu-item">• Multi-login prevention <span class="automation-indicator">AUTO</span></div>
+                        <div class="menu-item">• IP-based restrictions <span class="enhanced-badge">SMART</span></div>
+                        <div class="menu-item">• Bandwidth monitoring <span class="automation-indicator">LIVE</span></div>
+                        <div class="menu-item">• Usage analytics <span class="enhanced-badge">AI</span></div>
+                        <div class="menu-item">• Automated enforcement <span class="automation-indicator">24/7</span></div>
+                    </div>
+                </div>
+
+                <div class="box enhanced-box">
+                    <div class="cyan">Sample User Creation with Advanced Options:</div><br>
+                    <div>Username: <span class="green">premium_user</span></div>
+                    <div>Password: <span class="green">SecurePass123!</span></div>
+                    <div>Expired: <span class="green">30 days</span></div>
+                    <div>IP Limit: <span class="green">2 simultaneous</span> <span class="enhanced-badge">NEW</span></div>
+                    <div>Quota Limit: <span class="green">50GB/month</span> <span class="enhanced-badge">NEW</span></div>
+                    <div>Speed Limit: <span class="green">50Mbps</span> <span class="enhanced-badge">NEW</span></div>
+                    <div>Multi-login: <span class="green">Disabled</span> <span class="automation-indicator">AUTO</span></div>
+                    <div>Monitoring: <span class="green">Real-time</span> <span class="automation-indicator">LIVE</span></div>
+                </div>
+
+                <div class="cyan">🎯 Complete user lifecycle management with enterprise-grade controls!</div>
+            </div>
+
+            <!-- System Monitor -->
+            <div id="monitoring" class="tab-content">
+                <div class="header">
+                    <div class="blue">╔══════════════════════════════════════════════════════════════════════════════╗</div>
+                    <div class="blue">║<span class="cyan">                            ENHANCED SYSTEM MONITOR                          </span>║</div>
+                    <div class="blue">╚══════════════════════════════════════════════════════════════════════════════╝</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">15.2%</span>
+                        <div class="white">CPU USAGE</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 15.2%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">52.5%</span>
+                        <div class="white">MEMORY</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 52.5%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">25%</span>
+                        <div class="white">DISK</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 25%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">47</span>
+                        <div class="white">CONNECTIONS</div>
+                        <div class="automation-indicator">LIVE</div>
+                    </div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="white">Enhanced Service Status:</div><br>
+                        <div>nginx: <span class="status-indicator status-on"></span><span class="green">Running</span> <span class="automation-indicator">AUTO</span></div>
+                        <div>xray: <span class="status-indicator status-on"></span><span class="green">Running</span> <span class="automation-indicator">AUTO</span></div>
+                        <div>ssh: <span class="status-indicator status-on"></span><span class="green">Running</span> <span class="automation-indicator">AUTO</span></div>
+                        <div>dropbear: <span class="status-indicator status-on"></span><span class="green">Running</span> <span class="automation-indicator">AUTO</span></div>
+                        <div>ssh-ws: <span class="status-indicator status-on"></span><span class="green">Running</span> <span class="automation-indicator">AUTO</span></div>
+                        <div>shadowsocks: <span class="status-indicator status-on"></span><span class="green">Running</span> <span class="automation-indicator">AUTO</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="white">Enhanced Multiport Status:</div><br>
+                        <div>Port 443 (HTTPS): <span class="green">Active</span> - <span class="cyan">All TLS protocols</span> <span class="enhanced-badge">SECURE</span></div>
+                        <div>Port 80 (HTTP): <span class="green">Active</span> - <span class="cyan">All Non-TLS protocols</span> <span class="enhanced-badge">FAST</span></div>
+                        <div>Port 22 (SSH): <span class="green">Active</span> - <span class="cyan">Standard SSH</span> <span class="enhanced-badge">SECURE</span></div>
+                        <div>Port 1194 (OpenVPN): <span class="green">Active</span> - <span class="cyan">OpenVPN UDP</span> <span class="enhanced-badge">VPN</span></div>
+                        <div>Port 7300 (Dropbear): <span class="green">Active</span> - <span class="cyan">SSH UDP</span> <span class="enhanced-badge">FAST</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="white">Enhanced Path Routing:</div><br>
+                        <div>/vmess-ws: <span class="green">Active</span> <span class="enhanced-badge">MULTI</span></div>
+                        <div>/vless-ws: <span class="green">Active</span> <span class="enhanced-badge">MULTI</span></div>
+                        <div>/trojan-ws: <span class="green">Active</span> <span class="enhanced-badge">MULTI</span></div>
+                        <div>/ssh-ws: <span class="green">Active</span> <span class="enhanced-badge">MULTI</span></div>
+                        <div>/shadowsocks: <span class="green">Active</span> <span class="enhanced-badge">MULTI</span></div>
+                        <div>/vmess-ws-opok: <span class="green">Active</span> <span class="enhanced-badge">ISP</span></div>
+                        <div>/vmess-ws-isat: <span class="green">Active</span> <span class="enhanced-badge">ISP</span></div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="white">Real-time Analytics:</div><br>
+                        <div>Active Users: <span class="cyan">47</span> <span class="automation-indicator">LIVE</span></div>
+                        <div>Bandwidth Usage: <span class="cyan">156.78 GB today</span> <span class="automation-indicator">TRACKED</span></div>
+                        <div>Top Protocol: <span class="cyan">VMess (45%)</span> <span class="enhanced-badge">POPULAR</span></div>
+                        <div>Peak Hours: <span class="cyan">20:00-23:00</span> <span class="enhanced-badge">ANALYZED</span></div>
+                        <div>Efficiency: <span class="cyan">98.5%</span> <span class="enhanced-badge">OPTIMIZED</span></div>
+                    </div>
+                </div>
+
+                <div class="box enhanced-box">
+                    <div class="white">Enhanced Monitoring Features:</div><br>
+                    <div>✅ Real-time resource monitoring with alerts</div>
+                    <div>✅ Automated service health checks</div>
+                    <div>✅ User activity tracking and analytics</div>
+                    <div>✅ Performance optimization recommendations</div>
+                    <div>✅ Predictive maintenance alerts</div>
+                    <div>✅ Historical data analysis and trends</div>
+                </div>
+
+                <div class="cyan">🎯 Professional-grade monitoring with AI-powered insights!</div>
+            </div>
+
+            <!-- Multiport Configuration -->
+            <div id="multiport" class="tab-content">
+                <div class="header">
+                    <div class="blue">╔══════════════════════════════════════════════════════════════════════════════╗</div>
+                    <div class="blue">║<span class="cyan">                           ENHANCED MULTIPORT CONFIGURATION                  </span>║</div>
+                    <div class="blue">╚══════════════════════════════════════════════════════════════════════════════╝</div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="green">🔌 Port Architecture</div><br>
+                        <div><span class="cyan">Port 443 (HTTPS/TLS)</span> <span class="enhanced-badge">SECURE</span></div>
+                        <div>• All protocols with encryption</div>
+                        <div>• SSL/TLS termination</div>
+                        <div>• Perfect Forward Secrecy</div>
+                        <br>
+                        <div><span class="cyan">Port 80 (HTTP/Non-TLS)</span> <span class="enhanced-badge">FAST</span></div>
+                        <div>• All protocols without encryption</div>
+                        <div>• Maximum performance</div>
+                        <div>• Low latency connections</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">🌐 Protocol Routing</div><br>
+                        <div><span class="cyan">VMess Paths:</span></div>
+                        <div>• /vmess-ws (WebSocket)</div>
+                        <div>• /vmess-grpc (gRPC)</div>
+                        <div>• /vmess-httpupgrade (HTTP Upgrade)</div>
+                        <br>
+                        <div><span class="cyan">VLess Paths:</span></div>
+                        <div>• /vless-ws (WebSocket)</div>
+                        <div>• /vless-grpc (gRPC)</div>
+                        <div>• /vless-httpupgrade (HTTP Upgrade)</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">🇮🇩 Multi-ISP Optimization</div><br>
+                        <div><span class="cyan">Indonesian ISP Support:</span> <span class="enhanced-badge">OPTIMIZED</span></div>
+                        <div>• /vmess-ws-opok (OPOK optimized)</div>
+                        <div>• /vmess-ws-isat (Indosat optimized)</div>
+                        <div>• /vmess-ws-tsel (Telkomsel optimized)</div>
+                        <div>• /vmess-ws-xl (XL Axiata optimized)</div>
+                        <div>• /vmess-ws-tri (3 Indonesia optimized)</div>
+                        <div>• /vmess-ws-smart (Smartfren optimized)</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="green">⚡ Performance Features</div><br>
+                        <div>• Dynamic load balancing <span class="enhanced-badge">AUTO</span></div>
+                        <div>• Intelligent routing <span class="enhanced-badge">AI</span></div>
+                        <div>• Connection pooling <span class="enhanced-badge">OPTIMIZED</span></div>
+                        <div>• Bandwidth optimization <span class="enhanced-badge">SMART</span></div>
+                        <div>• Latency reduction <span class="enhanced-badge">ENHANCED</span></div>
+                        <div>• Failover protection <span class="automation-indicator">AUTO</span></div>
+                    </div>
+                </div>
+
+                <div class="box enhanced-box">
+                    <div class="cyan">Sample Enhanced Client Configuration (VMess WebSocket TLS):</div><br>
+                    <div class="white">```json</div>
+                    <div>{</div>
+                    <div>  "v": "2",</div>
+                    <div>  "ps": "Maull-Script V1.2.0 Enhanced",</div>
+                    <div>  "add": "yourdomain.com",</div>
+                    <div>  "port": "443",</div>
+                    <div>  "id": "your-uuid-here",</div>
+                    <div>  "net": "ws",</div>
+                    <div>  "path": "/vmess-ws-opok", <span class="enhanced-badge">ISP OPTIMIZED</span></div>
+                    <div>  "tls": "tls",</div>
+                    <div>  "sni": "yourdomain.com",</div>
+                    <div>  "alpn": "h2,http/1.1" <span class="enhanced-badge">HTTP/2</span></div>
+                    <div>}</div>
+                    <div class="white">```</div>
+                </div>
+
+                <div class="box enhanced-box">
+                    <div class="white">🎯 Multiport Advantages:</div><br>
+                    <div>✅ Only 5 ports used (443, 80, 22, 1194, 7300) - Firewall friendly</div>
+                    <div>✅ All protocols accessible through standard HTTPS/HTTP ports</div>
+                    <div>✅ ISP-specific optimization for Indonesian providers</div>
+                    <div>✅ Automatic load balancing and failover</div>
+                    <div>✅ Enhanced security with TLS termination</div>
+                    <div>✅ Maximum compatibility with restrictive networks</div>
+                </div>
+
+                <div class="cyan">🚀 Revolutionary multiport architecture - Maximum compatibility, minimum ports!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Enhanced auto-refresh system monitor
+        setInterval(() => {
+            if (document.getElementById('monitoring').classList.contains('active')) {
+                // Update CPU usage with more realistic fluctuation
+                const cpuUsage = Math.random() * 20 + 10;
+                const cpuFill = document.querySelector('#monitoring .progress-fill');
+                if (cpuFill) {
+                    cpuFill.style.width = cpuUsage + '%';
+                    cpuFill.parentElement.previousElementSibling.querySelector('.stat-number').textContent = cpuUsage.toFixed(1) + '%';
+                }
+                
+                // Update connections count
+                const connections = Math.floor(Math.random() * 30) + 35;
+                const connectionElement = document.querySelector('#monitoring .stat-card:last-child .stat-number');
+                if (connectionElement) {
+                    connectionElement.textContent = connections;
+                }
+                
+                // Update memory usage
+                const memUsage = Math.random() * 20 + 45;
+                const memFill = document.querySelectorAll('#monitoring .progress-fill')[1];
+                if (memFill) {
+                    memFill.style.width = memUsage + '%';
+                    memFill.parentElement.previousElementSibling.querySelector('.stat-number').textContent = memUsage.toFixed(1) + '%';
+                }
+            }
+        }, 3000);
+
+        // Simulate typing effect for installation
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Enhanced interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Create ripple effect
+                    const ripple = document.createElement('div');
+                    ripple.style.position = 'absolute';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.background = 'rgba(0, 255, 0, 0.6)';
+                    ripple.style.transform = 'scale(0)';
+                    ripple.style.animation = 'ripple 0.6s linear';
+                    ripple.style.left = '50%';
+                    ripple.style.top = '50%';
+                    ripple.style.width = '20px';
+                    ripple.style.height = '20px';
+                    ripple.style.marginLeft = '-10px';
+                    ripple.style.marginTop = '-10px';
+                    
+                    this.style.position = 'relative';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Add CSS for ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        // Enhanced status indicators animation
+        setInterval(() => {
+            const indicators = document.querySelectorAll('.status-indicator');
+            indicators.forEach(indicator => {
+                if (Math.random() > 0.95) { // 5% chance to blink
+                    indicator.style.opacity = '0.3';
+                    setTimeout(() => {
+                        indicator.style.opacity = '1';
+                    }, 100);
+                }
+            });
+        }, 1000);
+
+        // Simulate real-time data updates
+        setInterval(() => {
+            const automationIndicators = document.querySelectorAll('.automation-indicator');
+            automationIndicators.forEach(indicator => {
+                if (Math.random() > 0.9) { // 10% chance to pulse
+                    indicator.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        indicator.style.transform = 'scale(1)';
+                    }, 200);
+                }
+            });
+        }, 2000);
+
+        // Enhanced badge glow effect
+        setInterval(() => {
+            const enhancedBadges = document.querySelectorAll('.enhanced-badge');
+            enhancedBadges.forEach(badge => {
+                if (Math.random() > 0.8) { // 20% chance to glow
+                    badge.style.boxShadow = '0 0 20px rgba(255, 128, 0, 1)';
+                    setTimeout(() => {
+                        badge.style.boxShadow = '0 0 5px rgba(255, 0, 128, 0.5)';
+                    }, 500);
+                }
+            });
+        }, 3000);
+
+        console.log('🚀 Maull-Script V1.2.0 Enhanced Preview Loaded!');
+        console.log('✨ Features: Full Automation, Advanced User Management, Multi-ISP Support');
+        console.log('🎯 Zero Maintenance VPS Management Solution');
+    </script>
+</body>
+</html>

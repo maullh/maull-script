@@ -1,0 +1,129 @@
+{
+  "name": "maull-script-enhanced",
+  "version": "1.2.0",
+  "description": "Enhanced Complete VPS Tunneling Solution with Full Automation, Advanced User Management, and Multi-Protocol Support",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "preview": "node -e \"const http = require('http'); const fs = require('fs'); const path = require('path'); const server = http.createServer((req, res) => { const filePath = req.url === '/' ? 'preview.html' : req.url.slice(1); const extname = path.extname(filePath); let contentType = 'text/html'; if (extname === '.css') contentType = 'text/css'; else if (extname === '.js') contentType = 'text/javascript'; fs.readFile(filePath, (err, content) => { if (err) { res.writeHead(404); res.end('File not found'); } else { res.writeHead(200, { 'Content-Type': contentType }); res.end(content); } }); }); server.listen(8080, '0.0.0.0', () => console.log('Server running at http://localhost:8080')); \"",
+    "preview-python": "python3 -m http.server 8080 --bind 0.0.0.0 || python -m SimpleHTTPServer 8080",
+    "install-script": "chmod +x install-tunneling.sh && sudo ./install-tunneling.sh",
+    "test": "echo \"Testing Maull-Script V1.2.0...\" && bash -n maull-script.sh && bash -n install-tunneling.sh && echo \"✅ All scripts passed syntax check\"",
+    "docs": "echo \"📚 Documentation available:\" && echo \"• README.md - Main documentation\" && echo \"• ADVANCED-FEATURES.md - Advanced features guide\" && echo \"• TROUBLESHOOTING-GUIDE.md - Troubleshooting guide\" && echo \"• GITHUB-SETUP.md - GitHub setup guide\"",
+    "validate": "echo \"🔍 Validating configuration files...\" && find . -name '*.json' -exec jq . {} \\; && echo \"✅ All JSON files are valid\"",
+    "clean": "echo \"🧹 Cleaning temporary files...\" && rm -rf temp/ tmp/ *.log *.backup",
+    "deploy": "echo \"🚀 Deploying Maull-Script V1.2.0...\" && chmod +x *.sh && echo \"Ready for deployment!\"",
+    "monitor": "echo \"📊 System monitoring commands:\" && echo \"• htop - Process monitor\" && echo \"• iftop - Network monitor\" && echo \"• vnstat - Bandwidth statistics\" && echo \"• systemctl status - Service status\"",
+    "backup": "echo \"💾 Creating backup...\" && tar -czf maull-script-backup-$(date +%Y%m%d).tar.gz *.sh *.md *.json *.html && echo \"✅ Backup created\"",
+    "security-check": "echo \"🔒 Security check commands:\" && echo \"• fail2ban-client status - Check fail2ban\" && echo \"• ufw status - Check firewall\" && echo \"• ss -tuln - Check open ports\" && echo \"• last - Check login history\""
+  },
+  "keywords": [
+    "vps",
+    "tunneling",
+    "automation",
+    "xray",
+    "vmess",
+    "vless",
+    "trojan",
+    "shadowsocks",
+    "ssh",
+    "nginx",
+    "multiport",
+    "indonesia",
+    "opok",
+    "isat",
+    "monitoring",
+    "backup",
+    "security",
+    "linux",
+    "ubuntu",
+    "debian",
+    "centos",
+    "advanced",
+    "enhanced",
+    "management",
+    "proxy",
+    "vpn",
+    "websocket",
+    "grpc",
+    "http-upgrade",
+    "ssl",
+    "tls",
+    "automation",
+    "self-healing",
+    "enterprise"
+  ],
+  "author": "Maull-Script Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/maull-script.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/maull-script/issues"
+  },
+  "homepage": "https://github.com/your-username/maull-script#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
+  "config": {
+    "version": "1.2.0",
+    "name": "Maull-Script Enhanced",
+    "features": {
+      "auto_scheduling": true,
+      "advanced_user_management": true,
+      "system_management": true,
+      "monitoring_analytics": true,
+      "multi_path": true,
+      "speed_limiting": true,
+      "backup_recovery": true,
+      "troubleshooting": true,
+      "customization": true,
+      "api_integration": true
+    },
+    "protocols": [
+      "SSH WebSocket & SSL",
+      "SSH UDP (Dropbear)",
+      "SSH SlowDNS",
+      "SSH OpenVPN",
+      "ShadowSOCKS",
+      "VMess (V2Ray)",
+      "VLess (Xray)",
+      "Trojan",
+      "NoobzVPN"
+    ],
+    "ports": {
+      "https": 443,
+      "http": 80,
+      "ssh": 22,
+      "openvpn": 1194,
+      "dropbear": 7300
+    },
+    "automation": {
+      "reboot": "00:00 daily",
+      "update": "01:15 daily",
+      "backup": "11:15 daily",
+      "cleanup": "02:00 daily",
+      "monitor": "every 5 minutes"
+    },
+    "supported_os": [
+      "Ubuntu 20.04+",
+      "Debian 10+",
+      "CentOS 7+"
+    ]
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/your-username"
+  }
+}
