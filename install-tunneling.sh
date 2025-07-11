@@ -881,7 +881,7 @@ fi
 
 # Update script if available
 if [[ -f /root/maull-script.sh ]]; then
-    wget -O /tmp/maull-script-new.sh https://raw.githubusercontent.com/your-username/maull-script/main/maull-script.sh 2>/dev/null
+    wget -O /tmp/maull-script-new.sh https://raw.githubusercontent.com/maullh/maull-script/main/maull-script.sh 2>/dev/null
     if [[ $? -eq 0 ]]; then
         cp /root/maull-script.sh /root/maull-script.sh.backup
         cp /tmp/maull-script-new.sh /root/maull-script.sh
