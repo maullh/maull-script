@@ -1210,7 +1210,7 @@ update_script() {
     print_status "Checking for updates..."
     
     # Download latest version
-    wget -O /tmp/maull-script-new.sh https://raw.githubusercontent.com/your-username/maull-script/main/maull-script.sh
+    wget -O /tmp/maull-script-new.sh https://raw.githubusercontent.com/maullh/maull-script/main/maull-script.sh
     
     if [[ $? -eq 0 ]]; then
         # Backup current script
@@ -1440,7 +1440,7 @@ network_statistics() { echo "Network Statistics - Coming Soon"; sleep 2; }
 process_monitor() { echo "Process Monitor - Coming Soon"; sleep 2; }
 disk_usage_monitor() { echo "Disk Usage Monitor - Coming Soon"; sleep 2; }
 autokill_settings() { echo "Auto Kill Settings - Coming Soon"; sleep 2; }
-multipath_settings() { echo "Multi Path Settings - Coming Soon"; sleep 2; }
+multipath_settings() { echo "Multi Path Settings (Support OPOK ISAT) - Coming Soon"; sleep 2; }
 limit_ip_quota_settings() { echo "Limit IP & Quota Settings - Coming Soon"; sleep 2; }
 switch_limit_onoff() { echo "Switch Limit ON/OFF - Coming Soon"; sleep 2; }
 autobackup_settings() { echo "Auto Backup Settings - Coming Soon"; sleep 2; }
