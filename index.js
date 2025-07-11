@@ -45,7 +45,7 @@ console.log(`
    • LIMIT IP & QUOTA per user
    • MONITOR ACCOUNT real-time
    • RECOVERY ACCOUNT system
-   • MULTI PATH support (OPOK ISAT)
+   • MULTI PATH support
 
 🛠️ System Tools:
    • CHECK RUNNING SERVICE
