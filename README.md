@@ -108,19 +108,19 @@ Script otomatis untuk menginstall dan mengelola berbagai protokol tunneling di V
 
 ### Instalasi Otomatis
 ```bash
-wget -O maull-script.sh https://raw.githubusercontent.com/your-username/maull-script/main/maull-script.sh
+wget -O maull-script.sh https://raw.githubusercontent.com/maullh/maull-script/main/maull-script.sh
 chmod +x maull-script.sh
 sudo ./maull-script.sh install
 ```
 
 ### Instalasi Langsung
 ```bash
-bash <(curl -L https://raw.githubusercontent.com/your-username/maull-script/main/maull-script.sh)
+bash <(curl -L https://raw.githubusercontent.com/maullh/maull-script/main/maull-script.sh)
 ```
 
 ### Instalasi dengan Git
 ```bash
-git clone https://github.com/your-username/maull-script.git
+git clone https://github.com/maullh/maull-script.git
 cd maull-script
 chmod +x install-tunneling.sh
 sudo ./install-tunneling.sh
