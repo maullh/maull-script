@@ -883,7 +883,7 @@ advanced_settings_menu() {
     echo ""
     
     echo -e "${GREEN}1.${NC}  Change Banner"
-    echo -e "${GREEN}2.${NC}  Multi Path Settings (Support OPOK ISAT)"
+    echo -e "${GREEN}2.${NC}  Multi Path Settings"
     echo -e "${GREEN}3.${NC}  Limit IP & Quota Settings"
     echo -e "${GREEN}4.${NC}  Switch ON/OFF Limit"
     echo -e "${GREEN}5.${NC}  Auto Backup Settings"
